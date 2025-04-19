@@ -85,7 +85,16 @@ endif()
 
 find_package(raylib CONFIG REQUIRED)
 
-add_executable(Enuo_2D_RPG main.cpp)
+add_executable(Enuo_2D_RPG src/main.cpp
+        src/engine/engine.cpp
+        src/engine/engine.h
+        src/objects/RenderedObject.cpp
+        src/objects/RenderedObject.h
+        src/engine/ObjectManager.cpp
+        src/engine/ObjectManager.h
+        src/engine/IdManager.cpp
+        src/engine/IdManager.h
+)
 
 target_link_libraries(Enuo_2D_RPG PRIVATE raylib)
 
