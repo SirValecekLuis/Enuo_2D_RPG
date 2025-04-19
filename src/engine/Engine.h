@@ -4,6 +4,8 @@
 
 #ifndef ENGINE_H
 #define ENGINE_H
+
+#include "IdManager.h"
 #include "ObjectManager.h"
 
 
@@ -11,13 +13,13 @@ class Engine {
 public:
     static Engine& get_instance();
 
-    Engine(const Engine &) = delete;
+    Engine(const Engine&) = delete;
 
-    Engine(Engine &&) = delete;
+    Engine(Engine&&) = delete;
 
-    Engine &operator=(const Engine &) = delete;
+    Engine& operator=(const Engine&) = delete;
 
-    Engine &operator=(Engine &&) = delete;
+    Engine& operator=(Engine&&) = delete;
 
 
     ObjectManager object_manager;

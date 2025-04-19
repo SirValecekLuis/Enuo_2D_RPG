@@ -8,10 +8,10 @@
 
 class IdManager {
 public:
-    unsigned int generate_id();
+    static unsigned int gen_id();
 
 private:
-    unsigned int id = 0;
+    inline static unsigned int id = 0;
 };
 
 

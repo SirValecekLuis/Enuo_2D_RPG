@@ -4,6 +4,6 @@
 
 #include "IdManager.h"
 
-unsigned int IdManager::generate_id() {
+unsigned int IdManager::gen_id() {
     return id++;
 }
