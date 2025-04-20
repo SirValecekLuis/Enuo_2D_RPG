@@ -12,6 +12,12 @@ public:
     Player(float x, float y, float width, float height, float movement_speed);
 
     void render() const override;
+    void camera_refresh();
+
+    Camera2D& get_camera();
+
+private:
+    Camera2D camera;
 };
 
 

@@ -28,4 +28,5 @@ void KeyEventManager::check_all_inputs(const std::shared_ptr<Player>& player) {
     if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
         player->move_x(move_sp * dt);
     }
+    player->camera_refresh();
 }

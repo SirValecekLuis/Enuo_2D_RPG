@@ -5,8 +5,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "IdManager.h"
-#include "KeyEventManager.h"
+#include "MapManager.h"
 #include "ObjectManager.h"
 
 
@@ -24,6 +23,7 @@ public:
 
 
     ObjectManager object_manager;
+    MapManager map_manager = MapManager(64, 100, 100);
 
 private:
     Engine() = default;
