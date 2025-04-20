@@ -14,16 +14,18 @@ void KeyEventManager::check_all_inputs(const std::shared_ptr<Player>& player) {
         cout << "Menu Opened" << endl;
     }
 
+    const float move_sp = player->get_movement_speed();
+    const float dt = GetFrameTime();
     if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
-        player->move_y(-1);
+        player->move_y(-move_sp * dt);
     }
     if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
-        player->move_y(1);
+        player->move_y(move_sp * dt);
     }
     if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
-        player->move_x(-1);
+        player->move_x(-move_sp * dt);
     }
     if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
-        player->move_x(1);
+        player->move_x(move_sp * dt);
     }
 }

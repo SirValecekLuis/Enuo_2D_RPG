@@ -5,19 +5,24 @@
 #ifndef RENDEREDOBJECT_H
 #define RENDEREDOBJECT_H
 
+#include "raylib.h"
+
 class RenderedObject {
 public:
-    RenderedObject(int x, int y, int width, int height);
+    RenderedObject(float x, float y, float width, float height, float movement_speed);
     virtual ~RenderedObject() = default;
 
     [[nodiscard]] virtual unsigned int get_id() const;
 
     virtual void render() const;
-    void move_x(int add_x);
-    void move_y(int add_y);
+    void move_x(float add_x);
+    void move_y(float add_y);
+
+    float get_movement_speed() const;
 
 protected:
-    int x, y, width, height;
+    Vector2 position, size;
+    float movement_speed;
     unsigned int id;
 };
 

@@ -18,8 +18,8 @@ bool should_close() {
 
 void game_loop() {
     Engine& engine = Engine::get_instance();
-    auto player = std::make_shared<Player>(GetMonitorWidth(0) / 2, GetMonitorHeight(0) / 2, 32, 32);
-    auto enemy = std::make_shared<RenderedObject>(GetMonitorWidth(0) / 2 + 32, GetMonitorHeight(0) / 2 + 32, 32, 32);
+    auto player = std::make_shared<Player>(GetMonitorWidth(0) / 2.f, GetMonitorHeight(0) / 2.f, 32.f, 32.f, 200.f);
+    auto enemy = std::make_shared<RenderedObject>(GetMonitorWidth(0) / 2.f + 32, GetMonitorHeight(0) / 2.f + 32, 32.f, 32.f, 200.f);
 
     engine.object_manager.set_player(player);
     engine.object_manager.add_object(enemy);

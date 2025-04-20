@@ -9,7 +9,7 @@
 
 class Player final : public RenderedObject {
 public:
-    Player(int x, int y, int width, int height);
+    Player(float x, float y, float width, float height, float movement_speed);
 
     void render() const override;
 };
