@@ -6,6 +6,7 @@
 #define ENGINE_H
 
 #include "IdManager.h"
+#include "KeyEventManager.h"
 #include "ObjectManager.h"
 
 

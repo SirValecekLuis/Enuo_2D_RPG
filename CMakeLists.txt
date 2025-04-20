@@ -94,6 +94,12 @@ add_executable(Enuo_2D_RPG src/main.cpp
         src/engine/ObjectManager.h
         src/engine/IdManager.cpp
         src/engine/IdManager.h
+        src/engine/KeyEventManager.cpp
+        src/engine/KeyEventManager.h
+        src/raylib_init.cpp
+        src/raylib_init.h
+        src/objects/Player.cpp
+        src/objects/Player.h
 )
 
 target_link_libraries(Enuo_2D_RPG PRIVATE raylib)

@@ -8,13 +8,15 @@
 class RenderedObject {
 public:
     RenderedObject(int x, int y, int width, int height);
+    virtual ~RenderedObject() = default;
 
-    [[nodiscard]] unsigned int get_id() const;
+    [[nodiscard]] virtual unsigned int get_id() const;
 
-    void render() const;
-    void move(int add_x, int add_y);
+    virtual void render() const;
+    void move_x(int add_x);
+    void move_y(int add_y);
 
-private:
+protected:
     int x, y, width, height;
     unsigned int id;
 };
