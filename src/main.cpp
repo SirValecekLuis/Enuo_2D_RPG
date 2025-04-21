@@ -11,16 +11,15 @@ using std::cout, std::endl;
 bool should_close() {
     if (WindowShouldClose() && IsKeyDown(KEY_ESCAPE)) {
         return false;
-    }
-    else {
+    } else {
         return WindowShouldClose();
     }
 }
 
 void game_loop() {
-    Engine& engine = Engine::get_instance();
+    Engine &engine = Engine::get_instance();
 
-    if (!engine.map_manager.load_map("../../map/map.tmx", "../../map/tileset.png")) {
+    if (!engine.map_manager.load_map("../../map/map.tmx")) {
         cout << "Failed to load map or tileset." << endl;
         exit(-1);
     }
@@ -41,6 +40,7 @@ void game_loop() {
 
         BeginMode2D(player->get_camera());
         engine.map_manager.draw_map();
+        engine.map_manager.update_animations();
         engine.object_manager.render_objects();
         EndMode2D();
 
