@@ -41,14 +41,12 @@ bool MapManager::load_map(const std::string &file_path) {
         UnloadMap();
         return false;
     }
-    // Parse layers (map and decorations)
     if (!parse_layers(map_element)) {
         std::cerr << "Failed to parse map layers" << std::endl;
         UnloadMap();
         return false;
     }
 
-    // Parse object groups (spawn points)
     if (!parse_object_groups(map_element)) {
         std::cerr << "Failed to parse object groups" << std::endl;
         UnloadMap();
@@ -85,11 +83,9 @@ bool MapManager::parse_tileset(XMLElement *tileset_element, int firstgid) {
     const char *name = tileset_element->Attribute("name");
     tileset->name = name ? name : "unnamed";
 
-    // Získání rozměrů dlaždic
     tileset_element->QueryIntAttribute("tilewidth", &tileset->tile_width);
     tileset_element->QueryIntAttribute("tileheight", &tileset->tile_height);
 
-    // Kontrola, zda jde o normální tileset nebo tile-collection (individuální dlaždice)
     bool is_collection = false;
     const char *element_orientation = tileset_element->Attribute("orientation");
     const char *element_columns = tileset_element->Attribute("columns");
@@ -104,26 +100,22 @@ bool MapManager::parse_tileset(XMLElement *tileset_element, int firstgid) {
             const char *orientation = grid->Attribute("orientation");
             if (orientation && std::string(orientation) == "orthogonal") {
                 is_collection = true;
-                std::cout << "Detected tile collection tileset: " << tileset->name << std::endl;
             }
         }
     }
 
-    // Načtení společné textury (pokud existuje element image)
     XMLElement *image_element = tileset_element->FirstChildElement("image");
     if (image_element && !is_collection) {
         const char *source = image_element->Attribute("source");
         if (source) {
-            const std::string image_path = "../../map/" + std::string(source);
+            const std::string image_path = "../../assets/maps" + std::string(source);
 
             if (!load_tileset_texture(tileset, image_path)) {
-                std::cerr << "Failed to load tileset texture: " << image_path << std::endl;
                 return false;
             }
         }
     }
 
-    // Zpracování jednotlivých dlaždic
     for (XMLElement *tile_element = tileset_element->FirstChildElement("tile");
          tile_element;
          tile_element = tile_element->NextSiblingElement("tile")) {
@@ -134,30 +126,48 @@ bool MapManager::parse_tileset(XMLElement *tileset_element, int firstgid) {
             collidable_tiles.insert(tile_id + firstgid);
         }
 
-        // Načtení animací
         if (XMLElement *animation_element = tile_element->FirstChildElement("animation")) {
-            if (load_animations(tile_element, tileset, tile_id)) {
-                std::cout << "Loaded animation for tile ID " << tile_id << " in tileset " << tileset->name << std::endl;
-            }
+            load_animations(tile_element, tileset, tile_id);
         }
 
-        // Pro tile-collection potřebujeme načíst individuální texturu pro každou dlaždici
         if (is_collection) {
             XMLElement *img_element = tile_element->FirstChildElement("image");
             if (img_element) {
                 const char *source = img_element->Attribute("source");
                 if (source) {
-                    // Vytvoříme individuální texturu pro tuto dlaždici
-                    std::string image_path = "../../map/" + std::string(source);
-
+                    std::string image_path = "../../assets/maps" + std::string(source);
                     Texture2D tile_texture = LoadTexture(image_path.c_str());
-                    if (tile_texture.id == 0) {
-                        std::cerr << "Failed to load individual tile texture: " << image_path << std::endl;
-                    } else {
-                        // Pro účely animací ukládáme individuální textury do pomocné struktury
+                    if (tile_texture.id != 0) {
                         tileset->individual_textures[tile_id] = tile_texture;
-                        std::cout << "Loaded individual texture for tile ID " << tile_id << ": " << image_path <<
-                                std::endl;
+                    }
+                }
+            }
+        }
+
+        XMLElement *properties_element = tile_element->FirstChildElement("properties");
+        if (properties_element) {
+            int global_id = tile_id + firstgid;
+
+            for (XMLElement *property = properties_element->FirstChildElement("property");
+                 property;
+                 property = property->NextSiblingElement("property")) {
+                const char *prop_name = property->Attribute("name");
+                const char *prop_value = property->Attribute("value");
+
+                if (prop_name && prop_value) {
+                    std::string name_str = prop_name;
+
+                    if (name_str == "coin") {
+                        collectible_names[global_id] = "coin " + std::string(prop_value);
+                        collectible_values[global_id] = 10;
+                    } else if (name_str == "name") {
+                        collectible_names[global_id] = prop_value;
+                    } else if (name_str == "value") {
+                        try {
+                            collectible_values[global_id] = std::stof(prop_value);
+                        } catch ([[maybe_unused]] const std::exception &e) {
+                            collectible_values[global_id] = 1;
+                        }
                     }
                 }
             }
@@ -199,7 +209,7 @@ bool MapManager::load_tileset_texture(std::shared_ptr<Tileset> &tileset, const s
     return tileset->texture.id != 0;
 }
 
-std::shared_ptr<MapManager::Tileset> MapManager::get_tileset_for_gid(const int gid) const {
+std::shared_ptr<Tileset> MapManager::get_tileset_for_gid(const int gid) const {
     for (int i = static_cast<int>(tilesets.size()) - 1; i >= 0; i--) {
         if (gid >= tilesets[i]->firstgid) {
             return tilesets[i];
@@ -211,7 +221,6 @@ std::shared_ptr<MapManager::Tileset> MapManager::get_tileset_for_gid(const int g
 bool MapManager::parse_layers(XMLElement *map_element) {
     if (!map_element) return false;
 
-    // Look for a group that contains the map layers
     XMLElement *map_parts = nullptr;
     for (XMLElement *group = map_element->FirstChildElement("group");
          group;
@@ -224,11 +233,9 @@ bool MapManager::parse_layers(XMLElement *map_element) {
     }
 
     if (!map_parts) {
-        // If no map_parts group is found, try to find layers directly under map
         map_parts = map_element;
     }
 
-    // Parse all layers
     for (XMLElement *layer_element = map_parts->FirstChildElement("layer");
          layer_element;
          layer_element = layer_element->NextSiblingElement("layer")) {
@@ -240,7 +247,6 @@ bool MapManager::parse_layers(XMLElement *map_element) {
             return false;
         }
 
-        // Kontrola na collectibles layer
         if (layer->name == "collectibles") {
             has_collectibles = true;
         }
@@ -277,12 +283,11 @@ bool MapManager::parse_layer_data(XMLElement *layer_element, std::unique_ptr<Lay
             const auto tileset = get_tileset_for_gid(gid);
 
             if (!tileset) {
-                std::cerr << "No tileset found for gid " << gid << std::endl;
                 continue;
             }
 
             const int local_id = gid - tileset->firstgid;
-            int tileset_columns = 1; // Výchozí hodnota pro případy individuálních textur
+            int tileset_columns = 1;
 
             if (tileset->texture.id > 0) {
                 tileset_columns = tileset->texture.width / tileset->tile_width;
@@ -304,12 +309,11 @@ bool MapManager::parse_layer_data(XMLElement *layer_element, std::unique_ptr<Lay
             };
             t->gid = gid;
             t->animation = nullptr;
-            t->current_animation_tileid = local_id; // Inicializace na výchozí hodnotu
+            t->current_animation_tileid = local_id;
+            t->collected = false;
 
             if (auto anim_it = tileset->animations.find(local_id); anim_it != tileset->animations.end()) {
                 t->animation = &anim_it->second;
-                std::cout << "Added animated tile with gid " << gid << " at position (" << x << "," << y << ")" <<
-                        std::endl;
             }
 
             layer->tiles.push_back(std::move(t));
@@ -336,11 +340,10 @@ bool MapManager::parse_object_groups(XMLElement *map_element) {
         }
     }
 
-    if (!object_parts) return true; // Not an error if no object_parts
+    if (!object_parts) return true;
 
     bool success = true;
 
-    // Parse all object groups
     for (XMLElement *objectgroup = object_parts->FirstChildElement("objectgroup");
          objectgroup;
          objectgroup = objectgroup->NextSiblingElement("objectgroup")) {
@@ -388,12 +391,10 @@ void MapManager::update_animations() {
                             (tile_ptr->animation->current_frame + 1) % tile_ptr->animation->frames.size();
                 }
 
-                // Získání aktuálního ID dlaždice z animace
                 int current_tileid = tile_ptr->animation->frames[tile_ptr->animation->current_frame].tileid;
                 auto tileset = get_tileset_for_gid(tile_ptr->gid);
 
                 if (tileset) {
-                    // U animovaných dlaždic s vlastními texturami nastavíme celou texturu jako zdroj
                     if (auto it = tileset->individual_textures.find(current_tileid);
                         it != tileset->individual_textures.end()) {
                         tile_ptr->source_rect = {
@@ -403,7 +404,6 @@ void MapManager::update_animations() {
                         };
                         tile_ptr->current_animation_tileid = current_tileid;
                     } else if (tileset->texture.id > 0) {
-                        // Pro běžné tilesety s jednou texturou
                         int tileset_columns = tileset->texture.width / tileset->tile_width;
                         if (tileset_columns > 0) {
                             int ts_x = current_tileid % tileset_columns;
@@ -423,14 +423,16 @@ void MapManager::update_animations() {
     }
 }
 
-
 void MapManager::draw_map() const {
     for (const auto &layer_ptr: layers) {
         for (const auto &tile_ptr: layer_ptr->tiles) {
+            if (tile_ptr->collected) {
+                continue;
+            }
+
             auto tileset = get_tileset_for_gid(tile_ptr->gid);
 
             if (tileset) {
-                // Kontrola, zda se jedná o animovanou dlaždici s vlastní texturou
                 if (tile_ptr->animation) {
                     int current_tileid = tile_ptr->current_animation_tileid;
                     if (auto it = tileset->individual_textures.find(current_tileid);
@@ -440,7 +442,6 @@ void MapManager::draw_map() const {
                     }
                 }
 
-                // Standardní vykreslení dlaždice z hlavní textury
                 if (tileset->texture.id > 0) {
                     DrawTextureRec(tileset->texture, tile_ptr->source_rect, tile_ptr->position, WHITE);
                 }
@@ -451,13 +452,11 @@ void MapManager::draw_map() const {
 
 void MapManager::UnloadMap() {
     for (auto &tileset_ptr: tilesets) {
-        // Uvolnění hlavní textury
         if (tileset_ptr->texture.id > 0) {
             UnloadTexture(tileset_ptr->texture);
             tileset_ptr->texture = {0};
         }
 
-        // Uvolnění individuálních textur
         for (auto &[id, texture]: tileset_ptr->individual_textures) {
             if (texture.id > 0) {
                 UnloadTexture(texture);
@@ -476,21 +475,19 @@ Vector2 MapManager::get_spawn_point(const std::string &name) const {
     if (const auto it = spawn_points.find(name); it != spawn_points.end()) {
         return it->second;
     }
-    return Vector2{0, 0}; // Return origin if spawn point not found
+    return Vector2{0, 0};
 }
 
 bool MapManager::is_tile_collidable(const int x, const int y) const {
     if (x < 0 || y < 0 || x >= map_width || y >= map_height) {
-        return true; // Out of bounds is considered collidable
+        return true;
     }
 
-    // Check all layers in reverse (top to bottom)
     for (auto it = layers.rbegin(); it != layers.rend(); ++it) {
         for (const auto &tile_ptr: (*it)->tiles) {
             const int tile_x = static_cast<int>(tile_ptr->position.x / tile_width);
 
             if (const int tile_y = static_cast<int>(tile_ptr->position.y / tile_height); tile_x == x && tile_y == y) {
-                // Check if this tile's gid is in the collidable set
                 if (collidable_tiles.contains(tile_ptr->gid)) {
                     return true;
                 }
@@ -502,7 +499,6 @@ bool MapManager::is_tile_collidable(const int x, const int y) const {
 }
 
 bool MapManager::check_boundary_collision(const Rectangle rect) const {
-    // Check collision with map tiles
     const int start_x = static_cast<int>(rect.x / tile_width);
     const int start_y = static_cast<int>(rect.y / tile_height);
     const int end_x = static_cast<int>((rect.x + rect.width) / tile_width);
@@ -519,29 +515,53 @@ bool MapManager::check_boundary_collision(const Rectangle rect) const {
     return false;
 }
 
-std::string MapManager::check_collectible_collision(const Rectangle rect) const {
-    if (!has_collectibles) return "";
+std::optional<CollectibleInfo> MapManager::check_collectible_collision(const Rectangle rect) {
+    CollectibleInfo info = {"", 0.0f, {0, 0}};
 
-    for (const auto &layer_ptr: layers) {
-        if (layer_ptr->name != "collectibles") continue;
+    if (!has_collectibles) {
+        return std::nullopt;
+    }
 
-        for (const auto &tile_ptr: layer_ptr->tiles) {
-            const Rectangle tile_rect = {
-                tile_ptr->position.x,
-                tile_ptr->position.y,
+    for (const auto &layer: layers) {
+        if (layer->name != "collectibles") {
+            continue;
+        }
+
+        for (auto &tile: layer->tiles) {
+            if (tile->collected) {
+                continue;
+            }
+
+            Rectangle tile_rect = {
+                tile->position.x,
+                tile->position.y,
                 static_cast<float>(tile_width),
                 static_cast<float>(tile_height)
             };
 
             if (CheckCollisionRecs(rect, tile_rect)) {
-                if (const auto tileset = get_tileset_for_gid(tile_ptr->gid)) {
-                    return std::to_string(tile_ptr->gid - tileset->firstgid);
+                int gid = tile->gid;
+                auto tileset = get_tileset_for_gid(gid);
+
+                if (tileset) {
+                    auto property_iter = collectible_names.find(gid);
+                    if (property_iter != collectible_names.end()) {
+                        info.name = property_iter->second;
+
+                        auto value_iter = collectible_values.find(gid);
+                        if (value_iter != collectible_values.end()) {
+                            info.value = value_iter->second;
+                        }
+                    }
                 }
 
-                return std::to_string(tile_ptr->gid);
+                info.position = tile->position;
+                tile->collected = true;
+
+                return info;
             }
         }
     }
 
-    return "";
+    return std::nullopt;
 }

@@ -1,0 +1,35 @@
+{
+    "activeFile": "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/assets/maps/map.tmx",
+    "expandedProjectPaths": [
+    ],
+    "file.lastUsedOpenFilter": "Všechny soubory (*)",
+    "fileStates": {
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/assets/maps/map.tmx": {
+            "expandedGroupLayers": [
+                4,
+                6
+            ],
+            "scale": 3,
+            "selectedLayer": 3,
+            "viewCenter": {
+                "x": 445.3333333333333,
+                "y": 310
+            }
+        },
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/assets/maps/map.tmx#tiles_first": {
+            "dynamicWrapping": false,
+            "scaleInDock": 3
+        },
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/assets/maps/map.tmx#tiles_first_animated": {
+            "dynamicWrapping": true,
+            "scaleInDock": 4
+        }
+    },
+    "openFiles": [
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/assets/maps/map.tmx"
+    ],
+    "project": "Enuo.tiled-project",
+    "recentFiles": [
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/assets/maps/map.tmx"
+    ]
+}

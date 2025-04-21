@@ -19,7 +19,7 @@ bool should_close() {
 void game_loop() {
     Engine &engine = Engine::get_instance();
 
-    if (!engine.map_manager.load_map("../../map/map.tmx")) {
+    if (!engine.map_manager.load_map("../../assets/maps/map.tmx")) {
         cout << "Failed to load map or tileset." << endl;
         exit(-1);
     }
@@ -37,10 +37,11 @@ void game_loop() {
         ClearBackground(BLACK);
 
         KeyEventManager::check_all_inputs(player);
+        engine.map_manager.check_collectible_collision(player->get_rectangle());
 
         BeginMode2D(player->get_camera());
-        engine.map_manager.draw_map();
         engine.map_manager.update_animations();
+        engine.map_manager.draw_map();
         engine.object_manager.render_objects();
         EndMode2D();
 
