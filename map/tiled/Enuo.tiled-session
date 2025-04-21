@@ -8,8 +8,22 @@
     ],
     "file.lastUsedOpenFilter": "Všechny soubory (*)",
     "fileStates": {
+        "": {
+            "scaleInDock": 1
+        },
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/map/map.tmx#collision_set": {
+            "dynamicWrapping": true,
+            "scaleInEditor": 1
+        },
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/map/map.tmx#dungeon_tiles": {
+            "dynamicWrapping": false,
+            "scaleInEditor": 5.5
+        },
+        "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/map/map.tmx#tiles_first": {
+            "scaleInEditor": 4
+        }
     },
-    "last.imagePath": "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/map/tiled",
+    "last.imagePath": "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/map",
     "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
@@ -23,5 +37,6 @@
     "tileset.tileSize": {
         "height": 16,
         "width": 16
-    }
+    },
+    "tileset.type": 0
 }

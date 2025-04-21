@@ -21,7 +21,7 @@ public:
     float get_movement_speed() const;
 
 protected:
-    Vector2 position, size;
+    Rectangle rectangle;
     float movement_speed;
     unsigned int id;
 };

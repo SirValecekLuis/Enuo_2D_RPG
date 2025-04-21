@@ -7,6 +7,7 @@
 
 #include <memory>
 
+#include "Engine.h"
 #include "../objects/Player.h"
 
 
@@ -15,6 +16,8 @@ public:
     KeyEventManager() = default;
 
     static void check_all_inputs(const std::shared_ptr<Player>& player);
+
+    static Engine& engine;
 };
 
 

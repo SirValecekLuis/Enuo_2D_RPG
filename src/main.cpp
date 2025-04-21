@@ -19,8 +19,15 @@ bool should_close() {
 
 void game_loop() {
     Engine& engine = Engine::get_instance();
-    auto player = std::make_shared<Player>(GetMonitorWidth(0) / 2.f, GetMonitorHeight(0) / 2.f, 32.f, 32.f, 200.f);
-    auto enemy = std::make_shared<RenderedObject>(GetMonitorWidth(0) / 2.f + 32, GetMonitorHeight(0) / 2.f + 32, 32.f,
+
+    if (!engine.map_manager.load_map("../../map/map.tmx", "../../map/tileset.png")) {
+        cout << "Failed to load map or tileset." << endl;
+        exit(-1);
+    }
+
+    Vector2 player_pos = engine.map_manager.get_spawn_point("player_spawn");
+    auto player = std::make_shared<Player>(player_pos.x, player_pos.y, 8.f, 8.f, 200.f);
+    auto enemy = std::make_shared<RenderedObject>(0.f + 32, 0.f + 32, 32.f,
                                                   32.f, 200.f);
 
     engine.object_manager.set_player(player);
@@ -33,7 +40,7 @@ void game_loop() {
         KeyEventManager::check_all_inputs(player);
 
         BeginMode2D(player->get_camera());
-        engine.map_manager.render(player);
+        engine.map_manager.draw_map();
         engine.object_manager.render_objects();
         EndMode2D();
 

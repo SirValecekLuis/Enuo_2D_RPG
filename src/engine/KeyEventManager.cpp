@@ -9,6 +9,8 @@
 
 using std::cout, std::endl;
 
+Engine& KeyEventManager::engine = Engine::get_instance();
+
 void KeyEventManager::check_all_inputs(const std::shared_ptr<Player>& player) {
     if (IsKeyPressed(KEY_ESCAPE)) {
         cout << "Menu Opened" << endl;
@@ -16,17 +18,47 @@ void KeyEventManager::check_all_inputs(const std::shared_ptr<Player>& player) {
 
     const float move_sp = player->get_movement_speed();
     const float dt = GetFrameTime();
+    Rectangle player_rect = player->get_rectangle();
+
+    Rectangle test_rect = player_rect;
+
+    bool moved = false;
+
     if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
-        player->move_y(-move_sp * dt);
+        test_rect.y = player_rect.y - move_sp * dt;
+        if (!engine.map_manager.check_collision(test_rect)) {
+            player_rect.y = test_rect.y;
+            moved = true;
+        }
     }
+
     if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
-        player->move_y(move_sp * dt);
+        test_rect.y = player_rect.y + move_sp * dt;
+        if (!engine.map_manager.check_collision(test_rect)) {
+            player_rect.y = test_rect.y;
+            moved = true;
+        }
     }
+
     if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
-        player->move_x(-move_sp * dt);
+        test_rect.x = player_rect.x - move_sp * dt;
+        if (!engine.map_manager.check_collision(test_rect)) {
+            player_rect.x = test_rect.x;
+            moved = true;
+        }
     }
+
     if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
-        player->move_x(move_sp * dt);
+        test_rect.x = player_rect.x + move_sp * dt;
+        if (!engine.map_manager.check_collision(test_rect)) {
+            player_rect.x = test_rect.x;
+            moved = true;
+        }
     }
-    player->camera_refresh();
+
+    if (moved) {
+        player->set_rectangle(player_rect);
+        player->camera_refresh();
+    }
 }
+

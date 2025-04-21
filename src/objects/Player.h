@@ -15,6 +15,8 @@ public:
     void camera_refresh();
 
     Camera2D& get_camera();
+    Rectangle get_rectangle() const;
+    void set_rectangle(const Rectangle& rec);
 
 private:
     Camera2D camera;

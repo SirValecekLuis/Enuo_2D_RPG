@@ -84,6 +84,7 @@ else()
 endif()
 
 find_package(raylib CONFIG REQUIRED)
+find_package(tinyxml2 CONFIG REQUIRED)
 
 add_executable(Enuo_2D_RPG src/main.cpp
         src/engine/engine.cpp
@@ -105,6 +106,7 @@ add_executable(Enuo_2D_RPG src/main.cpp
 )
 
 target_link_libraries(Enuo_2D_RPG PRIVATE raylib)
+target_link_libraries(Enuo_2D_RPG PRIVATE tinyxml2::tinyxml2)
 
 set_target_properties(Enuo_2D_RPG PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"

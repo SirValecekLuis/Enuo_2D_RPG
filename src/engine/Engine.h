@@ -23,7 +23,7 @@ public:
 
 
     ObjectManager object_manager;
-    MapManager map_manager = MapManager(64, 100, 100);
+    MapManager map_manager;
 
 private:
     Engine() = default;
