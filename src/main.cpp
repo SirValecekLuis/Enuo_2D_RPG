@@ -1,9 +1,11 @@
+#include <filesystem>
 #include <iostream>
 
 #include "raylib.h"
 #include "raylib_init.h"
 #include "engine/Engine.h"
 #include "engine/KeyEventManager.h"
+#include "engine/TextManager.h"
 #include "objects/Player.h"
 
 using std::cout, std::endl;
@@ -18,8 +20,9 @@ bool should_close() {
 
 void game_loop() {
     Engine &engine = Engine::get_instance();
+    cout << "Aktuální pracovní adresář: " << std::filesystem::current_path() << std::endl;
 
-    if (!engine.map_manager.load_map("../../assets/maps/map.tmx")) {
+    if (!engine.map_manager.load_map("../../../assets/maps/map.tmx")) {
         cout << "Failed to load map or tileset." << endl;
         exit(-1);
     }
@@ -40,9 +43,10 @@ void game_loop() {
         engine.map_manager.check_collectible_collision(player->get_rectangle());
 
         BeginMode2D(player->get_camera());
-        engine.map_manager.update_animations();
         engine.map_manager.draw_map();
+        engine.map_manager.update_animations();
         engine.object_manager.render_objects();
+        engine.text_manager.update();
         EndMode2D();
 
         EndDrawing();

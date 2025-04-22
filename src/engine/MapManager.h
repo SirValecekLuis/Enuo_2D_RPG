@@ -8,7 +8,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <memory>
-#include <optional>
 
 struct AnimationFrame {
     int tileid;
@@ -72,7 +71,7 @@ public:
 
     bool check_boundary_collision(Rectangle rect) const;
 
-    std::optional<CollectibleInfo> check_collectible_collision(const Rectangle rect);
+    void check_collectible_collision(const Rectangle rect);
 
 private:
     int map_width;

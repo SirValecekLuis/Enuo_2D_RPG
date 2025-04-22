@@ -4,6 +4,9 @@
 #include <sstream>
 #include <filesystem>
 
+#include "Engine.h"
+#include "TextManager.h"
+
 using namespace tinyxml2;
 using std::cout, std::endl;
 namespace fs = std::filesystem;
@@ -108,7 +111,7 @@ bool MapManager::parse_tileset(XMLElement *tileset_element, int firstgid) {
     if (image_element && !is_collection) {
         const char *source = image_element->Attribute("source");
         if (source) {
-            const std::string image_path = "../../assets/maps" + std::string(source);
+            const std::string image_path = "../../../assets/maps/" + std::string(source);
 
             if (!load_tileset_texture(tileset, image_path)) {
                 return false;
@@ -135,7 +138,7 @@ bool MapManager::parse_tileset(XMLElement *tileset_element, int firstgid) {
             if (img_element) {
                 const char *source = img_element->Attribute("source");
                 if (source) {
-                    std::string image_path = "../../assets/maps" + std::string(source);
+                    std::string image_path = "../../../assets/maps/" + std::string(source);
                     Texture2D tile_texture = LoadTexture(image_path.c_str());
                     if (tile_texture.id != 0) {
                         tileset->individual_textures[tile_id] = tile_texture;
@@ -189,7 +192,7 @@ bool MapManager::load_animations(XMLElement *tile_element, std::shared_ptr<Tiles
     for (XMLElement *frame_element = animation_element->FirstChildElement("frame");
          frame_element;
          frame_element = frame_element->NextSiblingElement("frame")) {
-        AnimationFrame frame;
+        AnimationFrame frame{};
         frame_element->QueryIntAttribute("tileid", &frame.tileid);
         frame_element->QueryIntAttribute("duration", &frame.duration);
 
@@ -515,11 +518,11 @@ bool MapManager::check_boundary_collision(const Rectangle rect) const {
     return false;
 }
 
-std::optional<CollectibleInfo> MapManager::check_collectible_collision(const Rectangle rect) {
+void MapManager::check_collectible_collision(const Rectangle rect) {
     CollectibleInfo info = {"", 0.0f, {0, 0}};
 
     if (!has_collectibles) {
-        return std::nullopt;
+        return;
     }
 
     for (const auto &layer: layers) {
@@ -558,10 +561,9 @@ std::optional<CollectibleInfo> MapManager::check_collectible_collision(const Rec
                 info.position = tile->position;
                 tile->collected = true;
 
-                return info;
+                TextToRender text = {std::format("+ {}", static_cast<int>(info.value)), info.position, 7, 1, GOLD, 1};
+                Engine::get_instance().get_text_manager().add_text(text);
             }
         }
     }
-
-    return std::nullopt;
 }
