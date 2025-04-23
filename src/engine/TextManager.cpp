@@ -5,7 +5,8 @@
 #include "TextManager.h"
 
 TextManager::TextManager() {
-    font = LoadFont("../../../assets/fonts/PixelifySans-Bold.ttf");
+    const std::string font_path = PATH_TO_ASSETS + "/fonts/PixelifySans-Bold.ttf";
+    font = LoadFont(font_path.c_str());
 }
 
 TextManager::~TextManager() {
@@ -26,7 +27,7 @@ void TextManager::update() {
         if (it->time_rendered < it->time_to_live) {
             render_text(*it);
             it->time_rendered += GetFrameTime();
-            it->pos.y += -4 * GetFrameTime();
+            it->pos.y += -16 * GetFrameTime();
             ++it;
         } else {
             it = texts.erase(it);

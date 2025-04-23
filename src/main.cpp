@@ -47,6 +47,7 @@ void game_loop() {
         engine.map_manager.update_animations();
         engine.object_manager.render_objects();
         engine.text_manager.update();
+        engine.sound_manager.update();
         EndMode2D();
 
         EndDrawing();

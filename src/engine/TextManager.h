@@ -7,6 +7,7 @@
 
 class Engine;
 
+#include "../Constants.h"
 #include "MapManager.h"
 
 struct TextToRender {

@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 #include "tinyxml2.h"
+#include "../Constants.h"
+
 #include <string>
 #include <vector>
 #include <unordered_set>
@@ -65,13 +67,13 @@ public:
 
     void update_animations();
 
-    Vector2 get_spawn_point(const std::string &name) const;
+    [[nodiscard]] Vector2 get_spawn_point(const std::string &name) const;
 
-    bool is_tile_collidable(int x, int y) const;
+    [[nodiscard]] bool is_tile_collidable(int x, int y) const;
 
-    bool check_boundary_collision(Rectangle rect) const;
+    [[nodiscard]] bool check_boundary_collision(Rectangle rect) const;
 
-    void check_collectible_collision(const Rectangle rect);
+    void check_collectible_collision(Rectangle rect);
 
 private:
     int map_width;
@@ -102,7 +104,7 @@ private:
 
     bool load_animations(tinyxml2::XMLElement *tile_element, std::shared_ptr<Tileset> &tileset, int tile_id);
 
-    std::shared_ptr<Tileset> get_tileset_for_gid(int gid) const;
+    [[nodiscard]] std::shared_ptr<Tileset> get_tileset_for_gid(int gid) const;
 
     bool load_tileset_texture(std::shared_ptr<Tileset> &tileset, const std::string &image_path);
 };

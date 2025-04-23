@@ -105,6 +105,9 @@ add_executable(Enuo_2D_RPG src/main.cpp
         src/engine/MapManager.h
         src/engine/TextManager.cpp
         src/engine/TextManager.h
+        src/engine/SoundManager.cpp
+        src/engine/SoundManager.h
+        src/Constants.h
 )
 
 target_link_libraries(Enuo_2D_RPG PRIVATE raylib)

@@ -111,7 +111,7 @@ bool MapManager::parse_tileset(XMLElement *tileset_element, int firstgid) {
     if (image_element && !is_collection) {
         const char *source = image_element->Attribute("source");
         if (source) {
-            const std::string image_path = "../../../assets/maps/" + std::string(source);
+            const std::string image_path = PATH_TO_ASSETS + "/maps/" + std::string(source);
 
             if (!load_tileset_texture(tileset, image_path)) {
                 return false;
@@ -138,7 +138,7 @@ bool MapManager::parse_tileset(XMLElement *tileset_element, int firstgid) {
             if (img_element) {
                 const char *source = img_element->Attribute("source");
                 if (source) {
-                    std::string image_path = "../../../assets/maps/" + std::string(source);
+                    std::string image_path = PATH_TO_ASSETS + "/maps/" + std::string(source);
                     Texture2D tile_texture = LoadTexture(image_path.c_str());
                     if (tile_texture.id != 0) {
                         tileset->individual_textures[tile_id] = tile_texture;
@@ -563,6 +563,7 @@ void MapManager::check_collectible_collision(const Rectangle rect) {
 
                 TextToRender text = {std::format("+ {}", static_cast<int>(info.value)), info.position, 7, 1, GOLD, 1};
                 Engine::get_instance().get_text_manager().add_text(text);
+                Engine::get_instance().get_sound_manager().play_sound("coin.mp3");
             }
         }
     }

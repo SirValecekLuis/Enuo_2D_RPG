@@ -6,11 +6,11 @@
     "fileStates": {
         "C:/Users/Tobias/CLionProjects/Enuo 2D RPG/assets/maps/map.tmx": {
             "expandedGroupLayers": [
-                4,
-                6
+                6,
+                4
             ],
             "scale": 3,
-            "selectedLayer": 3,
+            "selectedLayer": 4,
             "viewCenter": {
                 "x": 445.3333333333333,
                 "y": 310
